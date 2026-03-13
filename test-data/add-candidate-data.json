@@ -1,0 +1,38 @@
+[
+  {
+    "description": "Add candidate with all required fields",
+    "firstName": "Alice",
+    "middleName": "",
+    "lastName": "Johnson",
+    "email": "alice.johnson@example.com",
+    "contactNumber": "0123456789",
+    "resume": "",
+    "keywords": "playwright,automation",
+    "notes": "Test candidate added via automation",
+    "expectedResult": "success"
+  },
+  {
+    "description": "Add candidate with minimal required fields",
+    "firstName": "Bob",
+    "middleName": "",
+    "lastName": "Smith",
+    "email": "bob.smith@example.com",
+    "contactNumber": "",
+    "resume": "",
+    "keywords": "",
+    "notes": "",
+    "expectedResult": "success"
+  },
+  {
+    "description": "Add candidate with middle name",
+    "firstName": "Carol",
+    "middleName": "Marie",
+    "lastName": "Williams",
+    "email": "carol.williams@example.com",
+    "contactNumber": "0987654321",
+    "resume": "",
+    "keywords": "qa,testing",
+    "notes": "Senior QA Engineer candidate",
+    "expectedResult": "success"
+  }
+]

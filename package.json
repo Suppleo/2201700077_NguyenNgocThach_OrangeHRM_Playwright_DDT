@@ -1,0 +1,24 @@
+{
+  "name": "2201700077_nguyenngocthach_orangehrm_playwright_ddt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:login": "npx playwright test tests/login.spec.ts",
+    "test:search": "npx playwright test tests/search.spec.ts",
+    "test:candidate": "npx playwright test tests/add-candidate.spec.ts",
+    "test:headed": "npx playwright test --headed",
+    "test:report": "npx playwright show-report",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.5.0",
+    "typescript": "^5.9.3"
+  }
+}

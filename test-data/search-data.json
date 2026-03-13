@@ -1,0 +1,30 @@
+[
+  {
+    "description": "Search employee by full name - existing employee",
+    "employeeName": "John",
+    "jobTitle": "",
+    "location": "",
+    "expectedResult": "found"
+  },
+  {
+    "description": "Search employee by partial name",
+    "employeeName": "Li",
+    "jobTitle": "",
+    "location": "",
+    "expectedResult": "found"
+  },
+  {
+    "description": "Search with name that yields no results",
+    "employeeName": "ZZZNonExistentEmployee999",
+    "jobTitle": "",
+    "location": "",
+    "expectedResult": "not_found"
+  },
+  {
+    "description": "Search with empty name - show all",
+    "employeeName": "",
+    "jobTitle": "",
+    "location": "",
+    "expectedResult": "found"
+  }
+]

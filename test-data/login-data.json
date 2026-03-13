@@ -1,0 +1,44 @@
+[
+  {
+    "description": "Valid login with correct credentials",
+    "username": "Admin",
+    "password": "admin123",
+    "expectedResult": "success",
+    "expectedUrl": "/web/index.php/dashboard/index"
+  },
+  {
+    "description": "Invalid login - wrong password",
+    "username": "Admin",
+    "password": "wrongpassword",
+    "expectedResult": "failure",
+    "expectedError": "Invalid credentials"
+  },
+  {
+    "description": "Invalid login - wrong username",
+    "username": "wronguser",
+    "password": "admin123",
+    "expectedResult": "failure",
+    "expectedError": "Invalid credentials"
+  },
+  {
+    "description": "Invalid login - empty username",
+    "username": "",
+    "password": "admin123",
+    "expectedResult": "failure",
+    "expectedError": "Required"
+  },
+  {
+    "description": "Invalid login - empty password",
+    "username": "Admin",
+    "password": "",
+    "expectedResult": "failure",
+    "expectedError": "Required"
+  },
+  {
+    "description": "Invalid login - both fields empty",
+    "username": "",
+    "password": "",
+    "expectedResult": "failure",
+    "expectedError": "Required"
+  }
+]
