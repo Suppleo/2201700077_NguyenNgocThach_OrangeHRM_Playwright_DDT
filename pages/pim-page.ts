@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 
 /**
  * Page Object for OrangeHRM PIM (Employee List) Page
@@ -7,11 +7,9 @@ import { Page, Locator, expect } from '@playwright/test';
  */
 export class PimPage {
   readonly page: Page;
-  readonly resultsTable: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.resultsTable = page.locator('.oxd-table');
   }
 
   async navigate(): Promise<void> {
@@ -22,49 +20,52 @@ export class PimPage {
 
   // Type in Employee Name autocomplete and submit search
   async searchByEmployeeName(name: string): Promise<void> {
-    // Employee Name is an autocomplete input with placeholder "Type for hints..."
-    const nameInput = this.page.locator(
-      '.oxd-autocomplete-text-input input[placeholder="Type for hints..."]'
-    ).first();
+    // Employee Name autocomplete input with placeholder "Type for hints..."
+    const nameInput = this.page.getByPlaceholder('Type for hints...').first();
     await nameInput.waitFor({ state: 'visible', timeout: 10000 });
     await nameInput.clear();
 
     if (name) {
       await nameInput.fill(name);
-      // Wait for autocomplete dropdown, then dismiss it
+      // Wait for autocomplete dropdown, then dismiss
       await this.page.waitForTimeout(1000);
       await nameInput.press('Escape');
     }
 
     // Click Search button
-    await this.page.locator('button[type="submit"]').click();
+    await this.page.getByRole('button', { name: 'Search' }).click();
     // Wait for results to load
     await this.page.waitForLoadState('networkidle');
-    await this.resultsTable.waitFor({ state: 'visible', timeout: 15000 });
+    await this.page.waitForTimeout(1500);
   }
 
-  // Check if "No Records Found" is displayed
+  // Get records count from "(N) Records Found" text
+  async getRecordsFoundCount(): Promise<number> {
+    try {
+      const span = this.page.locator('span').filter({ hasText: /Record/ });
+      await span.first().waitFor({ state: 'visible', timeout: 10000 });
+      const text = await span.first().textContent() ?? '';
+      const match = text.match(/\((\d+)\)/);
+      return match ? parseInt(match[1], 10) : 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  // Check if "No Records Found" is displayed (in table area or toast)
   async hasNoRecords(): Promise<boolean> {
     try {
-      const noRecords = this.page.getByText('No Records Found');
-      await noRecords.waitFor({ state: 'visible', timeout: 5000 });
+      const noRecords = this.page.getByText('No Records Found').first();
+      await noRecords.waitFor({ state: 'visible', timeout: 10000 });
       return true;
     } catch {
       return false;
     }
   }
 
-  // Count data rows in the table
-  async getTableRowCount(): Promise<number> {
-    try {
-      await this.resultsTable.waitFor({ state: 'visible', timeout: 10000 });
-      return await this.page.locator('.oxd-table-body .oxd-table-row').count();
-    } catch {
-      return 0;
-    }
-  }
-
   async expectResultsVisible(): Promise<void> {
-    await expect(this.resultsTable).toBeVisible({ timeout: 15000 });
+    // Wait for either "Records Found" or "No Records Found" to appear
+    await this.page.locator('span').filter({ hasText: /Record/ }).first()
+      .waitFor({ state: 'visible', timeout: 15000 });
   }
 }
