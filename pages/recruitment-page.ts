@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 
 /**
  * Page Object for OrangeHRM Recruitment / Candidates Page
@@ -16,16 +16,16 @@ export class RecruitmentPage {
   async navigateToCandidates(): Promise<void> {
     await this.page.goto('/web/index.php/recruitment/viewCandidates');
     await this.page.waitForURL(/recruitment\/viewCandidates/, { timeout: 20000 });
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   // Click the "+ Add" button to go to Add Candidate form
   async clickAddCandidate(): Promise<void> {
-    const addBtn = this.page.locator('button', { hasText: 'Add' });
+    const addBtn = this.page.getByRole('button', { name: 'Add' });
     await addBtn.waitFor({ state: 'visible', timeout: 15000 });
     await addBtn.click();
     await this.page.waitForURL(/recruitment\/addCandidate/, { timeout: 15000 });
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   // Fill candidate form using data from JSON
@@ -45,7 +45,7 @@ export class RecruitmentPage {
     }
     await this.page.locator('input[name="lastName"]').fill(data.lastName);
 
-    // Email - find input group by label text, then get the input inside
+    // Email - first "Type here" input in the Email row
     const emailGroup = this.page.locator('.oxd-input-group').filter({
       has: this.page.locator('label', { hasText: 'Email' }),
     });
@@ -59,15 +59,12 @@ export class RecruitmentPage {
       await contactGroup.locator('input').fill(data.contactNumber);
     }
 
-    // Keywords
+    // Keywords - has unique placeholder
     if (data.keywords) {
-      const keywordsGroup = this.page.locator('.oxd-input-group').filter({
-        has: this.page.locator('label', { hasText: 'Keywords' }),
-      });
-      await keywordsGroup.locator('input').fill(data.keywords);
+      await this.page.getByPlaceholder('Enter comma seperated words...').fill(data.keywords);
     }
 
-    // Notes
+    // Notes - textarea with placeholder "Type here"
     if (data.notes) {
       await this.page.locator('textarea').fill(data.notes);
     }
@@ -75,11 +72,13 @@ export class RecruitmentPage {
 
   // Click Save button
   async saveCandidate(): Promise<void> {
-    await this.page.locator('button[type="submit"]').click();
+    await this.page.getByRole('button', { name: 'Save' }).click();
   }
 
-  // Verify save succeeded (page navigates away from addCandidate)
+  // Verify save succeeded via success toast message
   async expectSaveSuccess(): Promise<void> {
-    await expect(this.page).not.toHaveURL(/addCandidate/, { timeout: 20000 });
+    await expect(
+      this.page.locator('.oxd-toast--success')
+    ).toBeVisible({ timeout: 20000 });
   }
 }
